@@ -1,0 +1,31 @@
+{
+  "properties": {
+    "displayName": "Enforce Azure Storage minimum TLS version",
+    "description": "Enforce Azure Storage minimum TLS version 1.2.",
+    "metadata": {
+      "category": "Storage",
+      "version": "1.0.0"
+    },
+    "mode": "All",
+    "policyType": "Custom",
+    "policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "field": "type",
+            "equals": "Microsoft.Storage/storageAccounts"
+          },
+          {
+            "not": {
+              "field": "Microsoft.Storage/storageAccounts/minimumTlsVersion",
+              "equals": "TLS1_2"
+            }
+          }
+        ]
+      },
+      "then": {
+        "effect": "Deny"
+      }
+    }
+  }
+}

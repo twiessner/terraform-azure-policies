@@ -1,0 +1,38 @@
+{
+  "properties": {
+    "displayName": "Enforce Azure naming conventions for resource groups",
+    "description": "Enforce Azure naming conventions for resource groups pattern -> rg-<workload>-<env>-westeu",
+    "metadata": {
+      "category": "Compliance",
+      "version": "1.0.0"
+    },
+    "mode": "All",
+    "policyType": "Custom",
+    "parameters": {
+      "env": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Environment",
+          "description": "The used deployment environment indicator."
+        }
+      }
+    },
+    "policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "field": "type",
+            "equals": "Microsoft.Resources/subscriptions/resourceGroups"
+          },
+          {
+            "field": "name",
+            "notLike": "[concat('rg', '-', '*', '-', parameters('env'), '-', 'westeu')]"
+          }
+        ]
+      },
+      "then": {
+        "effect": "Deny"
+      }
+    }
+  }
+}

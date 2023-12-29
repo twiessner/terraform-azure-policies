@@ -1,0 +1,29 @@
+{
+  "properties": {
+    "displayName": "Enforce Azure naming conventions for virtual network subnets",
+    "description": "Enforce Azure naming conventions for virtual network subnets -> snet-*",
+    "metadata": {
+      "category": "Compliance",
+      "version": "1.0.0"
+    },
+    "mode": "All",
+    "policyType": "Custom",
+    "policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "field": "type",
+            "equals": "Microsoft.Network/virtualNetworks/subnets"
+          },
+          {
+            "field": "name",
+            "notLike": "snet-*"
+          }
+        ]
+      },
+      "then": {
+        "effect": "Deny"
+      }
+    }
+  }
+}

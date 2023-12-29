@@ -1,0 +1,45 @@
+{
+  "properties": {
+    "displayName": "Enforce Azure storage protocol (https)",
+    "description": "Enforce Azure storage protocol (https).",
+    "metadata": {
+      "category": "Storage",
+      "version": "1.0.0"
+    },
+    "mode": "All",
+    "policyType": "Custom",
+    "policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "field": "type",
+            "equals": "Microsoft.Storage/storageAccounts"
+          },
+          {
+            "anyOf": [
+              {
+                "allOf": [
+                  {
+                    "value": "[requestContext().apiVersion]",
+                    "less": "2019-04-01"
+                  },
+                  {
+                    "field": "Microsoft.Storage/storageAccounts/supportsHttpsTrafficOnly",
+                    "exists": "false"
+                  }
+                ]
+              },
+              {
+                "field": "Microsoft.Storage/storageAccounts/supportsHttpsTrafficOnly",
+                "equals": "false"
+              }
+            ]
+          }
+        ]
+      },
+      "then": {
+        "effect": "Deny"
+      }
+    }
+  }
+}
