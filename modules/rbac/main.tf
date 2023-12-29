@@ -1,5 +1,6 @@
 
 locals {
+  # create a map from a list to simplify the handling :-)
   group_names = { for g in var.rbac_group_names : g => g }
 }
 

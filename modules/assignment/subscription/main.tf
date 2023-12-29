@@ -1,8 +1,9 @@
 
 locals {
+  # convert a terraform map to a valid json parameter value structure
   parameters = var.parameters != null ? { for k, v in var.parameters : k => {
     value = v
-  }} : null
+  } } : null
 }
 
 resource "azurerm_subscription_policy_assignment" "sub" {
@@ -20,6 +21,7 @@ resource "azurerm_subscription_policy_assignment" "sub" {
   }
 }
 
+# To simplify RBAC permissions, just add the created System Assigned Managed Identity to a Entry ID group
 module "rbac" {
   source = "../../../modules/rbac"
 

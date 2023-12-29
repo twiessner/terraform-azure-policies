@@ -20,6 +20,7 @@ variable "initiatives" {
     }))
     scope = string
   }))
+  description = "Specifies the data structure to define policy initiatives."
 }
 
 variable "assignments" {
@@ -32,8 +33,10 @@ variable "assignments" {
     initiative_id    = optional(string)
     rbac_group_names = optional(set(string), [])
   }))
+  description = "Specifies the data structure to define policy initiatives assignments."
 }
 
 variable "parameters" {
-  type = any
+  type        = any
+  description = "Specifies the data structure (any) to define policy assignment parameters as a map of key (parameter name) value (parameter value) pairs."
 }

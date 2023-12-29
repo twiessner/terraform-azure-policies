@@ -1,4 +1,5 @@
 
+# Define any initiative based on custom or builtIn policies
 module "initiatives" {
   source   = "./modules/initiatives"
   for_each = var.initiatives
@@ -13,6 +14,7 @@ module "initiatives" {
   parameters = each.value.parameters
 }
 
+# Filter any initiative assignments to management groups
 module "assignments_management_group" {
   source   = "./modules/assignment/management_group"
   for_each = { for k, v in var.assignments : k => v if v.type == "management_group" }
@@ -33,6 +35,7 @@ module "assignments_management_group" {
   ]
 }
 
+# Filter any initiative assignments to subscriptions
 module "assignments_subscription" {
   source   = "./modules/assignment/subscription"
   for_each = { for k, v in var.assignments : k => v if v.type == "subscription" }

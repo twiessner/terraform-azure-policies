@@ -3,11 +3,11 @@ variable "tenant_id" {
   type = string
 }
 
-variable "subscription_dev_id" {
+variable "subscription_id" {
   type = string
 }
 
-variable "initiative_scope_management_group_id" {
+variable "initiative_definition_management_group_id" {
   type = string
 }
 

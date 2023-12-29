@@ -1,10 +1,11 @@
 
 locals {
   initiatives = {
+    # Define all custom policy initiatives (it's possible to mix both Custom and Builtin policies)
     azure_general_initiative = {
       display_name = "Azure General Policy initiative"
       description  = "Azure General Policy initiative."
-      scope        = "Home" # TomsTech
+      scope        = var.initiative_definition_management_group_id
       parameters = {
         listOfAllowedLocations = "Array"
       }
@@ -26,9 +27,8 @@ locals {
     azure_storage_initiative = {
       display_name = "Azure Storage Policy initiative"
       description  = "Azure Storage Policy initiative."
-      scope        = "Home" # TomsTech
+      scope        = var.initiative_definition_management_group_id
       parameters = {
-
       }
       metadata = {
         version  = "0.5.0"
@@ -48,7 +48,7 @@ locals {
     azure_subscription_compliance_initiative = {
       display_name = "Azure Subscription Compliance Initiative"
       description  = "Azure Subscription Compliance Policy initiative description."
-      scope        = "Home" # TomsTech
+      scope        = var.initiative_definition_management_group_id
       parameters = {
         env = "String"
       }
@@ -73,26 +73,29 @@ locals {
     }
   }
 
+  # Define all policy initiatives assignment (type is important for the assignment scope).
+  # The type is `management_group` or `subscription`
+  # You can assign both Custom or BuiltIn initiatives here
   assignments = {
     azure_general_initiative = {
       display_name  = "Azure General Policy initiative"
       description   = "Azure General Policy initiative description."
       type          = "management_group"
-      scope         = "mg-lz" # Landing Zones
+      scope         = var.initiative_assignment_management_group_id
       initiative_id = "azure_general_initiative"
     }
     azure_storage_initiative = {
       display_name  = "Azure Storage Policy initiative"
       description   = "Azure Storage Policy initiative."
       type          = "management_group"
-      scope         = "mg-lz" # Landing Zones
+      scope         = var.initiative_assignment_management_group_id
       initiative_id = "azure_storage_initiative"
     }
     saas_network_access = {
       display_name = "Azure SaaS Network Access Policy initiative"
       description  = "Azure SaaS Network Access Policy initiative."
       type         = "management_group"
-      scope        = "mg-lz" # Landing Zones
+      scope        = var.initiative_assignment_management_group_id
       # https://www.azadvertizer.net/azpolicyinitiativesadvertizer/f1535064-3294-48fa-94e2-6e83095a5c08.html
       definition_id = "/providers/microsoft.authorization/policysetdefinitions/f1535064-3294-48fa-94e2-6e83095a5c08"
     }
@@ -100,7 +103,7 @@ locals {
       display_name = "CIS Microsoft Azure Foundations Benchmark v2.0.0"
       description  = "The Center for Internet Security (CIS) is a nonprofit entity whose mission is to identify, develop, validate, promote, and sustain best practice solutions for cyber defense."
       type         = "management_group"
-      scope        = "mg-lz" # Landing Zones
+      scope        = var.initiative_assignment_management_group_id
       # https://www.azadvertizer.net/azpolicyinitiativesadvertizer/06f19060-9e68-4070-92ca-f15cc126059e.html
       definition_id = "/providers/microsoft.authorization/policysetdefinitions/06f19060-9e68-4070-92ca-f15cc126059e"
     }
@@ -108,7 +111,7 @@ locals {
       display_name = "Microsoft Cloud Security Benchmark"
       description  = "The Microsoft cloud security benchmark initiative represents the policies and controls implementing security recommendations defined in Microsoft cloud security benchmark."
       type         = "management_group"
-      scope        = "mg-lz" # Landing Zones
+      scope        = var.initiative_assignment_management_group_id
       # https://www.azadvertizer.net/azpolicyinitiativesadvertizer/1f3afdf9-d0c9-4c3d-847f-89da613e70a8.html
       definition_id = "/providers/microsoft.authorization/policysetdefinitions/1f3afdf9-d0c9-4c3d-847f-89da613e70a8"
     }
@@ -116,7 +119,7 @@ locals {
       display_name = "ISO 27001:2013"
       description  = "The International Organization for Standardization (ISO) 27001 standard provides requirements for establishing, implementing, maintaining, and continuously improving an Information Security Management System (ISMS)."
       type         = "management_group"
-      scope        = "mg-lz" # Landing Zones
+      scope        = var.initiative_assignment_management_group_id
       # https://www.azadvertizer.net/azpolicyinitiativesadvertizer/89c6cddc-1c73-4ac1-b19c-54d1a15a42f2.html
       definition_id = "/providers/microsoft.authorization/policysetdefinitions/89c6cddc-1c73-4ac1-b19c-54d1a15a42f2"
     }
@@ -124,18 +127,13 @@ locals {
       display_name  = "Azure Subscription Compliance Initiative"
       description   = "Azure Subscription Compliance Policy initiative description."
       type          = "subscription"
-      scope         = "181688b9-abcc-4501-8896-c49d4dd1017d"
-      initiative_id = "azure_subscription_compliance_initiative"
-    }
-    azure_subscription_compliance_initiative_prod = {
-      display_name  = "Azure Subscription Compliance Initiative"
-      description   = "Azure Subscription Compliance Policy initiative description."
-      type          = "subscription"
-      scope         = "3791e567-da74-42be-96fa-da4a36c58154"
+      scope         = var.subscription_id
       initiative_id = "azure_subscription_compliance_initiative"
     }
   }
 
+  # Convention over configuration: re-use the same map keys here to link initiatives with parameters
+  # Names and value types are based on policy initiative definition
   parameters = {
     azure_general_initiative = {
       listOfAllowedLocations = ["West Europe"]
@@ -182,17 +180,5 @@ locals {
     azure_subscription_compliance_initiative_dev = {
       env = "dev"
     }
-    azure_subscription_compliance_initiative_prod = {
-      env = "prod"
-    }
   }
-}
-
-module "azure_policies" {
-  source = "../../"
-
-  location    = var.location
-  initiatives = local.initiatives
-  assignments = local.assignments
-  parameters  = local.parameters
 }
